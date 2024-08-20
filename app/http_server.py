@@ -1,15 +1,15 @@
 from fastapi import FastAPI, File, UploadFile
-from core.model import YOLOv10X
-from utils.config import load_config
-from utils.logging import setup_logger
-from utils.metrics import setup_metrics, INFERENCE_TIME
+from model import YOLOv10X
+from config import load_config
+from logging import getLogger
+from metrics import setup_metrics, INFERENCE_TIME
 import cv2
 import numpy as np
 import torch
 
 app = FastAPI()
 config = load_config()
-logger = setup_logger()
+logger = getLogger()
 model = YOLOv10X(**config['model'])
 
 

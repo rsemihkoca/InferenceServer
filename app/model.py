@@ -12,7 +12,7 @@ class YOLOv10X:
         self.nms_threshold = nms_threshold
         self.batch_size = batch_size
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda")
         self.model = self._load_model(model_path)
 
         self.queue = Queue(maxsize=64)

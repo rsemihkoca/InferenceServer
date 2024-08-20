@@ -1,4 +1,7 @@
 import multiprocessing
+
+import torch
+
 from http_server import app as http_app
 from grpc_server import serve as grpc_serve
 from config import load_config
@@ -16,6 +19,11 @@ def run_grpc_server():
 
 
 if __name__ == "__main__":
+    if config['server']['http_port'] == config['server']['grpc_port']:
+        raise ValueError("HTTP and GRPC ports must be different")
+    if not torch.cuda.is_available():
+        raise ValueError("CUDA is not available")
+
     http_process = multiprocessing.Process(target=run_http_server)
     grpc_process = multiprocessing.Process(target=run_grpc_server)
 
