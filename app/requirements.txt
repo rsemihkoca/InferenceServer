@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+grpcio
+grpcio-tools
+pyyaml
+torch
+torchvision
+opencv-python
+prometheus-client
