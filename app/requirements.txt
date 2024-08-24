@@ -1,9 +1,7 @@
-fastapi
 uvicorn
 grpcio
 grpcio-tools
 pyyaml
-torch
-torchvision
-opencv-python
+opencv-python==4.8.0.74
 prometheus-client
+#cuda

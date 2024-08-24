@@ -1,11 +1,11 @@
 import multiprocessing
 
 import torch
-
-from http_server import app as http_app
+print(torch.cuda.is_available())
+#from http_server import app as http_app
 from grpc_server import serve as grpc_serve
 from config import load_config
-import uvicorn
+#import uvicorn
 
 config = load_config()
 
@@ -24,11 +24,11 @@ if __name__ == "__main__":
     if not torch.cuda.is_available():
         raise ValueError("CUDA is not available")
 
-    http_process = multiprocessing.Process(target=run_http_server)
+#    http_process = multiprocessing.Process(target=run_http_server)
     grpc_process = multiprocessing.Process(target=run_grpc_server)
 
-    http_process.start()
+#    http_process.start()
     grpc_process.start()
 
-    http_process.join()
+#    http_process.join()
     grpc_process.join()
