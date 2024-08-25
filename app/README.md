@@ -11,3 +11,7 @@ echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
 echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+## install docker compose
+
+https://medium.com/jetson-docs/docker-compose-v2-on-jetson-nano-91db0c02493c

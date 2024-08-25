@@ -1,5 +1,6 @@
-import torch
+from ultralytics import YOLO
 import numpy as np
+import torch
 import cv2
 from queue import Queue
 from threading import Thread
@@ -11,18 +12,24 @@ class YOLOv10X:
         self.confidence_threshold = confidence_threshold
         self.nms_threshold = nms_threshold
         self.batch_size = batch_size
+        self.queue = Queue(maxsize=64)
+        self.result_queue = Queue()
 
         self.device = torch.device("cuda")
         self.model = self._load_model(model_path)
 
-        self.queue = Queue(maxsize=64)
-        self.result_queue = Queue()
         self._start_worker()
 
     def _load_model(self, model_path):
-        model = torch.load(model_path, map_location=self.device)
-        model.eval()
-        return torch.jit.script(model)  # Use TorchScript
+        # use torchscript for model loading
+        #model = torch.jit.load(model_path)
+
+        # Load a pre-trained YOLOv10n model
+        model = YOLO("yolov10x.pt", verbose=True)
+        # model = torch.load(model_path)
+        # model = model.to(self.device, non_blocking=True)
+        # model.eval()
+        return model
 
     def preprocess(self, image):
         img = cv2.resize(image, self.input_size)

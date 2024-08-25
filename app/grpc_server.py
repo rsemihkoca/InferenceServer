@@ -17,6 +17,8 @@ model = YOLOv10X(**config['model'])
 
 class InferenceService(InferenceServiceServicer):
     def Predict(self, request, context):
+
+        print("Received request" + str(request))
         nparr = np.frombuffer(request.image, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -33,8 +35,3 @@ def serve():
     server.add_insecure_port(f"[::]:{config['server']['grpc_port']}")
     server.start()
     server.wait_for_termination()
-
-
-if __name__ == "__main__":
-    torch.set_num_threads(1)
-    serve()
