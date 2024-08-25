@@ -1,7 +1,6 @@
-uvicorn
 grpcio
 grpcio-tools
 pyyaml
-opencv-python==4.8.0.74
-prometheus-client
-#cuda
+ultralytics
+torch
+prometheus_client

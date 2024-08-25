@@ -15,3 +15,10 @@ source ~/.bashrc
 ## install docker compose
 
 https://medium.com/jetson-docs/docker-compose-v2-on-jetson-nano-91db0c02493c
+
+
+## create grpc
+
+python3 -m grpc_tools.protoc -I=protos --python_out=. --grpc_python_out=. protos/inference.proto
+
+## compose restart

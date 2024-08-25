@@ -1,7 +1,7 @@
 services:
-  my-python-app:
+  inference_server:
     build: .
-    container_name: inference_custom
+    container_name: inference_server
     runtime: nvidia
     volumes:
       - ./app:/app

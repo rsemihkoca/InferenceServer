@@ -17,5 +17,5 @@ EXPOSE 8000 8001 50051
 
 # Define the command to run your application
 # Replace "your_script.py" with the entry point of your application
-CMD ["python3", "main.py"]
+CMD ["python3", "server.py"]
 

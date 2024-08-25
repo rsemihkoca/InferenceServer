@@ -1,3 +1,7 @@
+from PIL import Image
+import numpy as np
+import io
+
 import grpc
 from concurrent import futures
 import time
@@ -29,14 +33,22 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
     def Predict(self, request, context):
         try:
+
+            logger.info("Received an inference request")
             start_time = time.time()
 
             # Ensure CUDA is available
             if not torch.cuda.is_available():
                 raise RuntimeError("CUDA is not available. Please check your GPU setup.")
 
+
+            image = Image.open(io.BytesIO(request.image_data))
+
+            # Convert the PIL.Image to a numpy array
+            image_np = np.array(image)
+
             # Process the input (assuming the request contains image data)
-            results = self.model(request.image_data)
+            results = self.model(image_np)
 
             # Process results and create response
             detections = []
@@ -67,6 +79,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
 
 def serve():
+    logger.info("Starting server...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     inference_pb2_grpc.add_InferenceServiceServicer_to_server(InferenceService(), server)
     server.add_insecure_port(f"{config['server']['host']}:{config['server']['port']}")
