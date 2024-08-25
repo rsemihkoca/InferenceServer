@@ -5,7 +5,6 @@ import cv2
 from queue import Queue
 from threading import Thread
 
-
 class YOLOv10X:
     def __init__(self, model_path, input_size, confidence_threshold, nms_threshold, batch_size=4):
         self.input_size = input_size
@@ -14,21 +13,12 @@ class YOLOv10X:
         self.batch_size = batch_size
         self.queue = Queue(maxsize=64)
         self.result_queue = Queue()
-
         self.device = torch.device("cuda")
         self.model = self._load_model(model_path)
-
         self._start_worker()
 
     def _load_model(self, model_path):
-        # use torchscript for model loading
-        #model = torch.jit.load(model_path)
-
-        # Load a pre-trained YOLOv10n model
         model = YOLO("yolov10x.pt", verbose=True)
-        # model = torch.load(model_path)
-        # model = model.to(self.device, non_blocking=True)
-        # model.eval()
         return model
 
     def preprocess(self, image):
@@ -40,7 +30,6 @@ class YOLOv10X:
 
     def postprocess(self, output):
         # Implement post-processing logic here (NMS, etc.)
-        # This is a placeholder and needs to be implemented based on YOLOv10x output format
         pass
 
     @torch.no_grad()
@@ -56,13 +45,10 @@ class YOLOv10X:
                 if item is None:
                     break
                 batch.append(item)
-
             if not batch:
                 break
-
             input_batch = torch.cat(batch, dim=0)
             results = self._inference(input_batch)
-
             for result in results:
                 self.result_queue.put(result)
 
@@ -70,8 +56,11 @@ class YOLOv10X:
         Thread(target=self._worker, daemon=True).start()
 
     def inference(self, image):
+        print("before preprocess")
         preprocessed = self.preprocess(image)
+        print("after preprocess")
         self.queue.put(preprocessed)
+        print("after queue put")
         return self.result_queue.get()
 
     def __del__(self):

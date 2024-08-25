@@ -10,3 +10,5 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     ports:
       - "8000:8000"
+      - "8001:8001"
+      - "50051:50051"
