@@ -10,12 +10,23 @@ message PredictRequest {
   bytes image_data = 1;
 }
 
+message PredictResponse {
+  repeated Detection detections = 1;
+  string orig_shape = 2;
+  string boxes = 3;
+  string probs = 4;
+  string keypoints = 5;
+  string obb = 6;
+  string speed = 7;
+  string names = 8;
+  string json_output = 9;
+  bytes plot_image = 10;
+  string verbose_output = 11;
+  string summary = 12;
+}
+
 message Detection {
   string label = 1;
   float confidence = 2;
   repeated float bbox = 3;
-}
-
-message PredictResponse {
-  repeated Detection detections = 1;
 }
