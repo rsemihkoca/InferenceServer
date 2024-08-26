@@ -49,8 +49,9 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
             # Process the input (assuming the request contains image data)
             results = self.model(image_np)
-
-            # Process results and create response
+            logger.info(f"Inference completed in {time.time() - start_time:.4f} seconds")
+            logger.info(f"Resultsjson: {results.tojson()}")
+            logger.info(f"Resultsverbose: {results.verbose()}")
             detections = []
             for r in results:
                 for box in r.boxes:
@@ -63,7 +64,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
                         detections.append(detection)
 
             latency = time.time() - start_time
-            logger.info(f"Inference completed in {latency:.4f} seconds")
+            logger.info(f"Returning {len(detections)} detections")
 
             if config['metrics']['enabled']:
                 update_inference_count()
