@@ -4,7 +4,7 @@ server:
 
 model:
   path: 'yolov10x.pt'
-  confidence_threshold: 0.5
+  confidence_threshold: 0.1
   input_size: [640, 640]
   nms_threshold: 0.4
 
