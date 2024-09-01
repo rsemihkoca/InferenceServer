@@ -100,7 +100,7 @@ def serve():
     inference_pb2_grpc.add_InferenceServiceServicer_to_server(InferenceService(), server)
     server.add_insecure_port(f"{config['server']['host']}:{config['server']['port']}")
     server.start()
-    logger.info(f"Server started on {config['server']['host']}:{config['server']['port']}")
+    logger.info(f"Server started on {config['server']['host']}:{config['server']['port']} version {config['server']['version']}")
     server.wait_for_termination()
 
 
