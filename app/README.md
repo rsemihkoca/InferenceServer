@@ -23,6 +23,12 @@ python3 -m grpc_tools.protoc -I=protos --python_out=. --grpc_python_out=. protos
 
 ## compose restart
 
+alias compose-restart='sudo docker image prune -f && sudo docker compose down -v --remove-orphans && sudo docker compose up --build -d && docker compose logs -f'
+
 ## ncdu not showing all files
 
 sudo ncdu
+
+## create env with python 3.8
+
+conda create -n inference python=3.8
