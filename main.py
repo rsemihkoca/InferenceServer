@@ -50,7 +50,8 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             image = Image.open(io.BytesIO(request.image_data))
             image_np = np.array(image)
 
-            results = self.model(image_np)
+            results = self.model(image_np, conf=config['model']['confidence_threshold'], 
+                                 iou=config['model']['nms_threshold'])
             detections = self.process_result(results[0])
 
             response = inference_pb2.PredictResponse(detections=detections)
@@ -76,7 +77,8 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             start_time = time.time()
 
             images = [np.array(Image.open(io.BytesIO(img))) for img in request.image_data]
-            results = self.model(images, batch=len(images))
+            results = self.model(images, batch=len(images), conf=config['model']['confidence_threshold'], 
+                                 iou=config['model']['nms_threshold'])
 
             batch_response = inference_pb2.BatchPredictResponse()
             for result in results:
@@ -106,7 +108,8 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             image = Image.open(io.BytesIO(request.image_data))
             image_np = np.array(image)
 
-            results = self.model(image_np)
+            results = self.model(image_np, conf=config['model']['confidence_threshold'], 
+                                 iou=config['model']['nms_threshold'])
             result = results[0]
 
             detections = self.process_result(result)
