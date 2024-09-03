@@ -14,7 +14,7 @@ from utils.config_loader import load_config
 from utils.logger import setup_logger
 from utils.metrics import setup_metrics, update_inference_count, update_inference_latency
 
-config = load_config('config.yml')
+config = load_config('./utils/config.yml')
 logger = setup_logger(config['logging']['level'], config['logging']['file'])
 
 if config['metrics']['enabled']:

@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: gRPC Inference Service",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/server.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "args": [
+                // Add any command line arguments here if needed
+            ],
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "pythonPath": "/usr/bin/python3",
+            "preLaunchTask": "",
+            "postDebugTask": ""
+        }
+    ]
+}

@@ -9,7 +9,7 @@ WORKDIR /app
 RUN pip3 install prometheus_client
 
 # Copy the content of the app folder into the /app directory in the container
-COPY ./app /app
+COPY . /app
 
 
 # Expose any ports your application might use (optional)
