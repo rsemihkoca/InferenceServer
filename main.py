@@ -8,13 +8,13 @@ import time
 import yaml
 import torch
 from ultralytics import YOLO
-import inference_pb2
-import inference_pb2_grpc
+import proto.inference_pb2 as inference_pb2
+import proto.inference_pb2_grpc as inference_pb2_grpc
 from utils.config_loader import load_config
 from utils.logger import setup_logger
 from utils.metrics import setup_metrics, update_inference_count, update_inference_latency
 
-config = load_config('./utils/config.yml')
+config = load_config('config.yml')
 logger = setup_logger(config['logging']['level'], config['logging']['file'])
 
 if config['metrics']['enabled']:
@@ -27,7 +27,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
     def load_model(self):
         logger.info("Loading model...")
-        model = YOLO(config['model']['path'])
+        model = YOLO(config['model']['path'], verbose=True)
         model.to('cuda')  # Ensure model is on GPU
         return model
 

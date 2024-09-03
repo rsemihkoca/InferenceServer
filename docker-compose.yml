@@ -4,7 +4,7 @@ services:
     container_name: inference_server
     runtime: nvidia
     volumes:
-      - ./app:/app
+      - .:/app
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
