@@ -1,6 +1,6 @@
 from prometheus_client import start_http_server, Counter, Histogram
 
-INFERENCE_COUNT = Counter('inference_count', 'Number of inferences')
+INFERENCE_COUNT = Counter('inference_count', 'Number of inferences performed')
 INFERENCE_LATENCY = Histogram('inference_latency_seconds', 'Latency of inference requests')
 
 def setup_metrics(port):

@@ -1,17 +1,16 @@
 server:
-  host: '0.0.0.0'
+  host: "0.0.0.0"
   port: 50051
-  version: '0.1.1'
+  version: "1.0.0"
 
 model:
-  path: 'yolov10x.pt'
+  path: "yolov8n.pt"
   confidence_threshold: 0.1
-  input_size: [640, 640]
-  nms_threshold: 0.4
+  nms_threshold: 0.5
 
 logging:
-  level: 'INFO'
-  file: 'inference_server.log'
+  level: "INFO"
+  file: "inference_server.log"
 
 metrics:
   enabled: true

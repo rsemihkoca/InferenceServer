@@ -1,9 +1,12 @@
+
 syntax = "proto3";
 
 package inference;
 
 service InferenceService {
   rpc Predict (PredictRequest) returns (PredictResponse) {}
+  rpc BatchPredict (BatchPredictRequest) returns (BatchPredictResponse) {}
+  rpc TestPredict (TestPredictRequest) returns (TestPredictResponse) {}
 }
 
 message PredictRequest {
@@ -11,6 +14,22 @@ message PredictRequest {
 }
 
 message PredictResponse {
+  repeated Detection detections = 1;
+}
+
+message BatchPredictRequest {
+  repeated bytes image_data = 1;
+}
+
+message BatchPredictResponse {
+  repeated PredictResponse results = 1;
+}
+
+message TestPredictRequest {
+  bytes image_data = 1;
+}
+
+message TestPredictResponse {
   repeated Detection detections = 1;
   string orig_shape = 2;
   string boxes = 3;
@@ -22,7 +41,6 @@ message PredictResponse {
   string json_output = 9;
   bytes plot_image = 10;
   string verbose_output = 11;
-  string summary = 12;
 }
 
 message Detection {
