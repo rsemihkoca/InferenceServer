@@ -13,7 +13,7 @@ COPY . /app
 
 
 # Expose any ports your application might use (optional)
-EXPOSE 8000 8001 50051
+EXPOSE 8000 50051
 
 # Define the command to run your application
 # Replace "your_script.py" with the entry point of your application
