@@ -1,12 +1,12 @@
 server:
   host: "0.0.0.0"
   port: 50051
-  version: "1.0.3"
+  version: "1.0.6"
 
 model:
   path: "yolov10x.pt"
   confidence_threshold: 0.1
-  nms_threshold: 0.5
+  nms_threshold: 0.15
 
 logging:
   level: "INFO"
