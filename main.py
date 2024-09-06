@@ -44,20 +44,21 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
     def Predict(self, request, context):
         try:
-            logger.info("Received a single inference request")
+            camera_ip = request.image.camera_ip
+            logger.info(f"Received a single inference request from camera IP: {camera_ip}")
             start_time = time.time()
 
-            image = Image.open(io.BytesIO(request.image_data))
+            image = Image.open(io.BytesIO(request.image.image_data))
             image_np = np.array(image)
 
             results = self.model(image_np, conf=config['model']['confidence_threshold'], 
                                  iou=config['model']['nms_threshold'])
             detections = self.process_result(results[0])
 
-            response = inference_pb2.PredictResponse(detections=detections)
+            response = inference_pb2.PredictResponse(camera_ip=camera_ip, detections=detections)
 
             latency = time.time() - start_time
-            logger.info(f"Single inference completed in {latency:.4f} seconds")
+            logger.info(f"Single inference completed in {latency:.4f} seconds for camera IP: {camera_ip}")
 
             if config['metrics']['enabled']:
                 update_inference_count()
@@ -66,24 +67,27 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             return response
 
         except Exception as e:
-            logger.error(f"Error during single inference: {str(e)}")
+            logger.error(f"Error during single inference for camera IP {camera_ip}: {str(e)}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"An error occurred during inference: {str(e)}")
             return inference_pb2.PredictResponse()
 
     def BatchPredict(self, request, context):
         try:
-            logger.info(f"Received a batch inference request with {len(request.image_data)} images")
+            logger.info(f"Received a batch inference request with {len(request.images)} images")
             start_time = time.time()
 
-            images = [np.array(Image.open(io.BytesIO(img))) for img in request.image_data]
-            results = self.model(images, batch=len(images), conf=config['model']['confidence_threshold'], 
-                                 iou=config['model']['nms_threshold'])
-
             batch_response = inference_pb2.BatchPredictResponse()
-            for result in results:
-                detections = self.process_result(result)
-                batch_response.results.append(inference_pb2.PredictResponse(detections=detections))
+            for image_data in request.images:
+                camera_ip = image_data.camera_ip
+                image = Image.open(io.BytesIO(image_data.image_data))
+                image_np = np.array(image)
+
+                results = self.model(image_np, conf=config['model']['confidence_threshold'], 
+                                     iou=config['model']['nms_threshold'])
+                detections = self.process_result(results[0])
+
+                batch_response.results.append(inference_pb2.PredictResponse(camera_ip=camera_ip, detections=detections))
 
             latency = time.time() - start_time
             logger.info(f"Batch inference completed in {latency:.4f} seconds")
@@ -102,10 +106,11 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
     def TestPredict(self, request, context):
         try:
-            logger.info("Received a test inference request")
+            camera_ip = request.image.camera_ip
+            logger.info(f"Received a test inference request from camera IP: {camera_ip}")
             start_time = time.time()
 
-            image = Image.open(io.BytesIO(request.image_data))
+            image = Image.open(io.BytesIO(request.image.image_data))
             image_np = np.array(image)
 
             results = self.model(image_np, conf=config['model']['confidence_threshold'], 
@@ -119,6 +124,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             Image.fromarray(plot_image).save(plot_image_bytes, format='PNG')
 
             response = inference_pb2.TestPredictResponse(
+                camera_ip=camera_ip,
                 detections=detections,
                 orig_shape=str(result.orig_shape),
                 boxes=str(result.boxes),
@@ -133,7 +139,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             )
 
             latency = time.time() - start_time
-            logger.info(f"Test inference completed in {latency:.4f} seconds")
+            logger.info(f"Test inference completed in {latency:.4f} seconds for camera IP: {camera_ip}")
 
             if config['metrics']['enabled']:
                 update_inference_count()
@@ -142,7 +148,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             return response
 
         except Exception as e:
-            logger.error(f"Error during test inference: {str(e)}")
+            logger.error(f"Error during test inference for camera IP {camera_ip}: {str(e)}")
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"An error occurred during test inference: {str(e)}")
             return inference_pb2.TestPredictResponse()

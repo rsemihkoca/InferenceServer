@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package inference;
@@ -9,16 +8,22 @@ service InferenceService {
   rpc TestPredict (TestPredictRequest) returns (TestPredictResponse) {}
 }
 
+message ImageData {
+  string camera_ip = 1;
+  bytes image_data = 2;
+}
+
 message PredictRequest {
-  bytes image_data = 1;
+  ImageData image = 1;
 }
 
 message PredictResponse {
-  repeated Detection detections = 1;
+  string camera_ip = 1;
+  repeated Detection detections = 2;
 }
 
 message BatchPredictRequest {
-  repeated bytes image_data = 1;
+  repeated ImageData images = 1;
 }
 
 message BatchPredictResponse {
@@ -26,21 +31,22 @@ message BatchPredictResponse {
 }
 
 message TestPredictRequest {
-  bytes image_data = 1;
+  ImageData image = 1;
 }
 
 message TestPredictResponse {
-  repeated Detection detections = 1;
-  string orig_shape = 2;
-  string boxes = 3;
-  string probs = 4;
-  string keypoints = 5;
-  string obb = 6;
-  string speed = 7;
-  string names = 8;
-  string json_output = 9;
-  bytes plot_image = 10;
-  string verbose_output = 11;
+  string camera_ip = 1;
+  repeated Detection detections = 2;
+  string orig_shape = 3;
+  string boxes = 4;
+  string probs = 5;
+  string keypoints = 6;
+  string obb = 7;
+  string speed = 8;
+  string names = 9;
+  string json_output = 10;
+  bytes plot_image = 11;
+  string verbose_output = 12;
 }
 
 message Detection {

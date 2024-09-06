@@ -1,10 +1,10 @@
 server:
   host: "0.0.0.0"
   port: 50051
-  version: "1.0.1"
+  version: "1.0.3"
 
 model:
-  path: "yolov8n.pt"
+  path: "yolov10x.pt"
   confidence_threshold: 0.1
   nms_threshold: 0.5
 
