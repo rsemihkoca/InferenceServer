@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0finference.proto\x12\tinference\"2\n\tImageData\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12\x12\n\nimage_data\x18\x02 \x01(\x0c\"5\n\x0ePredictRequest\x12#\n\x05image\x18\x01 \x01(\x0b\x32\x14.inference.ImageData\"N\n\x0fPredictResponse\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12(\n\ndetections\x18\x02 \x03(\x0b\x32\x14.inference.Detection\";\n\x13\x42\x61tchPredictRequest\x12$\n\x06images\x18\x01 \x03(\x0b\x32\x14.inference.ImageData\"C\n\x14\x42\x61tchPredictResponse\x12+\n\x07results\x18\x01 \x03(\x0b\x32\x1a.inference.PredictResponse\"9\n\x12TestPredictRequest\x12#\n\x05image\x18\x01 \x01(\x0b\x32\x14.inference.ImageData\"\x83\x02\n\x13TestPredictResponse\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12(\n\ndetections\x18\x02 \x03(\x0b\x32\x14.inference.Detection\x12\x12\n\norig_shape\x18\x03 \x01(\t\x12\r\n\x05\x62oxes\x18\x04 \x01(\t\x12\r\n\x05probs\x18\x05 \x01(\t\x12\x11\n\tkeypoints\x18\x06 \x01(\t\x12\x0b\n\x03obb\x18\x07 \x01(\t\x12\r\n\x05speed\x18\x08 \x01(\t\x12\r\n\x05names\x18\t \x01(\t\x12\x13\n\x0bjson_output\x18\n \x01(\t\x12\x12\n\nplot_image\x18\x0b \x01(\x0c\x12\x16\n\x0everbose_output\x18\x0c \x01(\t\"<\n\tDetection\x12\r\n\x05label\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02\x12\x0c\n\x04\x62\x62ox\x18\x03 \x03(\x02\x32\xf9\x01\n\x10InferenceService\x12\x42\n\x07Predict\x12\x19.inference.PredictRequest\x1a\x1a.inference.PredictResponse\"\x00\x12Q\n\x0c\x42\x61tchPredict\x12\x1e.inference.BatchPredictRequest\x1a\x1f.inference.BatchPredictResponse\"\x00\x12N\n\x0bTestPredict\x12\x1d.inference.TestPredictRequest\x1a\x1e.inference.TestPredictResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0finference.proto\x12\tinference\"2\n\tImageData\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12\x12\n\nimage_data\x18\x02 \x01(\x0c\"5\n\x0ePredictRequest\x12#\n\x05image\x18\x01 \x01(\x0b\x32\x14.inference.ImageData\"N\n\x0fPredictResponse\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12(\n\ndetections\x18\x02 \x03(\x0b\x32\x14.inference.Detection\";\n\x13\x42\x61tchPredictRequest\x12$\n\x06images\x18\x01 \x03(\x0b\x32\x14.inference.ImageData\"C\n\x14\x42\x61tchPredictResponse\x12+\n\x07results\x18\x01 \x03(\x0b\x32\x1a.inference.PredictResponse\"9\n\x12TestPredictRequest\x12#\n\x05image\x18\x01 \x01(\x0b\x32\x14.inference.ImageData\"\x83\x02\n\x13TestPredictResponse\x12\x11\n\tcamera_ip\x18\x01 \x01(\t\x12(\n\ndetections\x18\x02 \x03(\x0b\x32\x14.inference.Detection\x12\x12\n\norig_shape\x18\x03 \x01(\t\x12\r\n\x05\x62oxes\x18\x04 \x01(\t\x12\r\n\x05probs\x18\x05 \x01(\t\x12\x11\n\tkeypoints\x18\x06 \x01(\t\x12\x0b\n\x03obb\x18\x07 \x01(\t\x12\r\n\x05speed\x18\x08 \x01(\t\x12\r\n\x05names\x18\t \x01(\t\x12\x13\n\x0bjson_output\x18\n \x01(\t\x12\x12\n\nplot_image\x18\x0b \x01(\x0c\x12\x16\n\x0everbose_output\x18\x0c \x01(\t\"N\n\tDetection\x12\r\n\x05label\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02\x12\x0c\n\x04\x62\x62ox\x18\x03 \x03(\x02\x12\x10\n\x08\x63\x65ntroid\x18\x04 \x03(\x02\x32\xf9\x01\n\x10InferenceService\x12\x42\n\x07Predict\x12\x19.inference.PredictRequest\x1a\x1a.inference.PredictResponse\"\x00\x12Q\n\x0c\x42\x61tchPredict\x12\x1e.inference.BatchPredictRequest\x1a\x1f.inference.BatchPredictResponse\"\x00\x12N\n\x0bTestPredict\x12\x1d.inference.TestPredictRequest\x1a\x1e.inference.TestPredictResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -369,6 +369,13 @@ _DETECTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='centroid', full_name='inference.Detection.centroid', index=3,
+      number=4, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -382,7 +389,7 @@ _DETECTION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=668,
-  serialized_end=728,
+  serialized_end=746,
 )
 
 _PREDICTREQUEST.fields_by_name['image'].message_type = _IMAGEDATA
@@ -466,8 +473,8 @@ _INFERENCESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=731,
-  serialized_end=980,
+  serialized_start=749,
+  serialized_end=998,
   methods=[
   _descriptor.MethodDescriptor(
     name='Predict',

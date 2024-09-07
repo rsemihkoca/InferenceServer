@@ -53,4 +53,5 @@ message Detection {
   string label = 1;
   float confidence = 2;
   repeated float bbox = 3;
+  repeated float centroid = 4;
 }

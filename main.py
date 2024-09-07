@@ -23,6 +23,7 @@ if config['metrics']['enabled']:
 class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
     def __init__(self):
         self.model = self.load_model()
+        self.target_classes = config['model']['target_classes'].keys()
 
     def load_model(self):
         logger.info("Loading model...")
@@ -33,11 +34,15 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
     def process_result(self, result):
         detections = []
         for box in result.boxes:
-            if box.conf.item() > config['model']['confidence_threshold']:
+            class_id = int(box.cls)
+            if (class_id in self.target_classes and box.conf.item() > config['model']['confidence_threshold']):
+                xyxy = box.xyxy[0].tolist()
+                centroid = [(xyxy[0] + xyxy[2]) / 2, (xyxy[1] + xyxy[3]) / 2]
                 detection = inference_pb2.Detection(
-                    label=result.names[int(box.cls)],
+                    label=result.names[class_id],
                     confidence=box.conf.item(),
-                    bbox=box.xyxy[0].tolist()
+                    bbox=xyxy,
+                    centroid=centroid
                 )
                 detections.append(detection)
         return detections
@@ -52,7 +57,9 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             image_np = np.array(image)
 
             results = self.model(image_np, conf=config['model']['confidence_threshold'], 
-                                 iou=config['model']['nms_threshold'])
+                                 iou=config['model']['nms_threshold'],
+                                 classes=self.target_classes)
+            
             detections = self.process_result(results[0])
 
             response = inference_pb2.PredictResponse(camera_ip=camera_ip, detections=detections)
@@ -84,7 +91,9 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
                 image_np = np.array(image)
 
                 results = self.model(image_np, conf=config['model']['confidence_threshold'], 
-                                     iou=config['model']['nms_threshold'])
+                                     iou=config['model']['nms_threshold'],
+                                     classes=self.target_classes)
+                
                 detections = self.process_result(results[0])
 
                 batch_response.results.append(inference_pb2.PredictResponse(camera_ip=camera_ip, detections=detections))
@@ -112,7 +121,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
             image = Image.open(io.BytesIO(request.image.image_data))
             image_np = np.array(image)
-
+            # Test Predict must return all classes
             results = self.model(image_np, conf=config['model']['confidence_threshold'], 
                                  iou=config['model']['nms_threshold'])
             result = results[0]

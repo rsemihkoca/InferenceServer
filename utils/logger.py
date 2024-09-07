@@ -1,7 +1,11 @@
-
 import logging
+import os
 
 def setup_logger(level, filename):
+    # Check if the file exists, and if so, delete it
+    if os.path.exists(filename):
+        os.remove(filename)
+
     logger = logging.getLogger(__name__)
     logger.setLevel(level)
 
