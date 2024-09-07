@@ -1,7 +1,7 @@
 server:
   host: "0.0.0.0"
   port: 50051
-  version: "1.2.2"
+  version: "1.2.3"
 
 
 logging:
@@ -16,7 +16,7 @@ metrics:
 model:
   path: "yolov10x.pt"
   confidence_threshold: 0.1
-  nms_threshold: 0.1
+  nms_threshold: 0.5
   classNames: {
     "0": "person",
     "13": "bench",

@@ -49,80 +49,26 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             logger.error(f"Error getting target classes: {str(e)}")
             raise
 
-    def custom_nms(self, boxes, scores, iou_threshold):
-        try:
-            x1 = boxes[:, 0]
-            y1 = boxes[:, 1]
-            x2 = boxes[:, 2]
-            y2 = boxes[:, 3]
-            areas = (x2 - x1) * (y2 - y1)
-            order = scores.argsort()[::-1]
-
-            keep = []
-            while order.size > 0:
-                i = order[0]
-                keep.append(i)
-                xx1 = np.maximum(x1[i], x1[order[1:]])
-                yy1 = np.maximum(y1[i], y1[order[1:]])
-                xx2 = np.minimum(x2[i], x2[order[1:]])
-                yy2 = np.minimum(y2[i], y2[order[1:]])
-
-                w = np.maximum(0.0, xx2 - xx1)
-                h = np.maximum(0.0, yy2 - yy1)
-                inter = w * h
-                ovr = inter / (areas[i] + areas[order[1:]] - inter)
-
-                inds = np.where(ovr <= iou_threshold)[0]
-                order = order[inds + 1]
-
-            return keep
-        except Exception as e:
-            logger.error(f"Error in custom NMS: {str(e)}")
-            raise
-
-    def custom_postprocess(self, result):
+    def process_result(self, result):
         try:
             boxes = result.boxes.xyxy.cpu().numpy()
             scores = result.boxes.conf.cpu().numpy()
             class_ids = result.boxes.cls.cpu().numpy().astype(int)
 
-            nms_threshold = config['model']['nms_threshold']
-            confidence_threshold = config['model']['confidence_threshold']
+            # Apply NMS using cv2.dnn.NMSBoxes
+            indices = cv2.dnn.NMSBoxes(
+                boxes.tolist(),
+                scores.tolist(),
+                config['model']['confidence_threshold'],
+                config['model']['nms_threshold']
+            )
 
-            final_boxes = []
-            final_scores = []
-            final_class_ids = []
-
-            for class_id in np.unique(class_ids):
-                class_mask = class_ids == class_id
-                class_boxes = boxes[class_mask]
-                class_scores = scores[class_mask]
-
-                keep = self.custom_nms(class_boxes, class_scores, nms_threshold)
-
-                final_boxes.extend(class_boxes[keep])
-                final_scores.extend(class_scores[keep])
-                final_class_ids.extend([class_id] * len(keep))
-
-            final_boxes = np.array(final_boxes)
-            final_scores = np.array(final_scores)
-            final_class_ids = np.array(final_class_ids)
-
-            mask = final_scores > confidence_threshold
-            final_boxes = final_boxes[mask]
-            final_scores = final_scores[mask]
-            final_class_ids = final_class_ids[mask]
-
-            return final_boxes, final_scores, final_class_ids
-        except Exception as e:
-            logger.error(f"Error in custom postprocessing: {str(e)}")
-            raise
-
-    def process_result(self, result):
-        try:
-            boxes, scores, class_ids = self.custom_postprocess(result)
             detections = []
-            for box, score, class_id in zip(boxes, scores, class_ids):
+            for i in indices:
+                box = boxes[i]
+                score = scores[i]
+                class_id = class_ids[i]
+                
                 xyxy = box.tolist()
                 centroid = [(xyxy[0] + xyxy[2]) / 2, (xyxy[1] + xyxy[3]) / 2]
                 detection = inference_pb2.Detection(
@@ -212,7 +158,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             result = results[0]
 
             detections = self.process_result(result)
-
+            # !FIXME: detections nms filtered but result.boxes not so we need to filter and then plot
             # Plot image with centroids
             plot_image = result.plot(boxes=True, conf=True, line_width=2)
             
