@@ -49,26 +49,32 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             logger.error(f"Error getting target classes: {str(e)}")
             raise
 
-    def process_result(self, result):
+    def process_result(self, result, apply_nms=False):
         try:
             boxes = result.boxes.xyxy.cpu().numpy()
             scores = result.boxes.conf.cpu().numpy()
             class_ids = result.boxes.cls.cpu().numpy().astype(int)
 
-            # Apply NMS using cv2.dnn.NMSBoxes
-            indices = cv2.dnn.NMSBoxes(
-                boxes.tolist(),
-                scores.tolist(),
-                config['model']['confidence_threshold'],
-                config['model']['nms_threshold']
-            )
+            # Filter based on confidence threshold
+            mask = scores >= config['model']['confidence_threshold']
+            boxes = boxes[mask]
+            scores = scores[mask]
+            class_ids = class_ids[mask]
+
+            if apply_nms:
+                # Apply NMS using cv2.dnn.NMSBoxes
+                indices = cv2.dnn.NMSBoxes(
+                    boxes.tolist(),
+                    scores.tolist(),
+                    config['model']['confidence_threshold'],
+                    config['model']['nms_threshold']
+                )
+                boxes = boxes[indices]
+                scores = scores[indices]
+                class_ids = class_ids[indices]
 
             detections = []
-            for i in indices:
-                box = boxes[i]
-                score = scores[i]
-                class_id = class_ids[i]
-                
+            for box, score, class_id in zip(boxes, scores, class_ids):
                 xyxy = box.tolist()
                 centroid = [(xyxy[0] + xyxy[2]) / 2, (xyxy[1] + xyxy[3]) / 2]
                 detection = inference_pb2.Detection(
@@ -163,7 +169,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
                                  classes=self.target_classes)
             result = results[0]
 
-            detections = self.process_result(result)
+            detections = self.process_result(result, apply_nms=False)
             # !FIXME: detections nms filtered but result.boxes not so we need to filter and then plot
             # Plot image with centroids
             plot_image = result.plot(boxes=True, conf=True, line_width=2)

@@ -39,14 +39,11 @@ message TestPredictResponse {
   repeated Detection detections = 2;
   string orig_shape = 3;
   string boxes = 4;
-  string probs = 5;
-  string keypoints = 6;
-  string obb = 7;
-  string speed = 8;
-  string names = 9;
-  string json_output = 10;
-  bytes plot_image = 11;
-  string verbose_output = 12;
+  string speed = 5;
+  string names = 6;
+  string json_output = 7;
+  bytes plot_image = 8;
+  string verbose_output = 9;
 }
 
 message Detection {
