@@ -165,7 +165,8 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
 def serve():
     logger.info("Starting server...")
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10),
+                     options=[('grpc.max_receive_message_length', 40 * 1024 * 1024)])
     inference_pb2_grpc.add_InferenceServiceServicer_to_server(InferenceService(), server)
     server.add_insecure_port(f"{config['server']['host']}:{config['server']['port']}")
     server.start()
