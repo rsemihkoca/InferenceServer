@@ -4,7 +4,7 @@ from concurrent import futures
 
 import grpc
 import numpy as np
-import torch
+import cv2
 from PIL import Image
 from ultralytics import YOLO
 
@@ -129,7 +129,14 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
 
             detections = self.process_result(result)
 
-            plot_image = result.plot()
+            # Plot image with centroids
+            plot_image = result.plot(boxes=True, conf=True, line_width=2)
+            
+            # Add centroids to the plot
+            for detection in detections:
+                centroid = detection.centroid
+                cv2.circle(plot_image, (int(centroid[0]), int(centroid[1])), 5, (0, 255, 0), -1)
+
             plot_image_bytes = io.BytesIO()
             Image.fromarray(plot_image).save(plot_image_bytes, format='PNG')
 
