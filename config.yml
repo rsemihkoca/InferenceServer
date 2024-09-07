@@ -16,7 +16,7 @@ metrics:
 model:
   path: "yolov10x.pt"
   confidence_threshold: 0.1
-  nms_threshold: 0.75
+  nms_threshold: 0.1
   classNames: {
     "0": "person",
     "13": "bench",
