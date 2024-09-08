@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from proto import inference_pb2 as proto_dot_inference__pb2
+from proto import inference_pb2 as inference__pb2
 
 
 class InferenceServiceStub(object):
@@ -16,18 +16,18 @@ class InferenceServiceStub(object):
         """
         self.Predict = channel.unary_unary(
                 '/inference.InferenceService/Predict',
-                request_serializer=proto_dot_inference__pb2.PredictRequest.SerializeToString,
-                response_deserializer=proto_dot_inference__pb2.PredictResponse.FromString,
+                request_serializer=inference__pb2.PredictRequest.SerializeToString,
+                response_deserializer=inference__pb2.PredictResponse.FromString,
                 )
         self.BatchPredict = channel.unary_unary(
                 '/inference.InferenceService/BatchPredict',
-                request_serializer=proto_dot_inference__pb2.BatchPredictRequest.SerializeToString,
-                response_deserializer=proto_dot_inference__pb2.BatchPredictResponse.FromString,
+                request_serializer=inference__pb2.BatchPredictRequest.SerializeToString,
+                response_deserializer=inference__pb2.BatchPredictResponse.FromString,
                 )
         self.TestPredict = channel.unary_unary(
                 '/inference.InferenceService/TestPredict',
-                request_serializer=proto_dot_inference__pb2.TestPredictRequest.SerializeToString,
-                response_deserializer=proto_dot_inference__pb2.TestPredictResponse.FromString,
+                request_serializer=inference__pb2.TestPredictRequest.SerializeToString,
+                response_deserializer=inference__pb2.TestPredictResponse.FromString,
                 )
 
 
@@ -57,18 +57,18 @@ def add_InferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Predict': grpc.unary_unary_rpc_method_handler(
                     servicer.Predict,
-                    request_deserializer=proto_dot_inference__pb2.PredictRequest.FromString,
-                    response_serializer=proto_dot_inference__pb2.PredictResponse.SerializeToString,
+                    request_deserializer=inference__pb2.PredictRequest.FromString,
+                    response_serializer=inference__pb2.PredictResponse.SerializeToString,
             ),
             'BatchPredict': grpc.unary_unary_rpc_method_handler(
                     servicer.BatchPredict,
-                    request_deserializer=proto_dot_inference__pb2.BatchPredictRequest.FromString,
-                    response_serializer=proto_dot_inference__pb2.BatchPredictResponse.SerializeToString,
+                    request_deserializer=inference__pb2.BatchPredictRequest.FromString,
+                    response_serializer=inference__pb2.BatchPredictResponse.SerializeToString,
             ),
             'TestPredict': grpc.unary_unary_rpc_method_handler(
                     servicer.TestPredict,
-                    request_deserializer=proto_dot_inference__pb2.TestPredictRequest.FromString,
-                    response_serializer=proto_dot_inference__pb2.TestPredictResponse.SerializeToString,
+                    request_deserializer=inference__pb2.TestPredictRequest.FromString,
+                    response_serializer=inference__pb2.TestPredictResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -92,8 +92,8 @@ class InferenceService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/inference.InferenceService/Predict',
-            proto_dot_inference__pb2.PredictRequest.SerializeToString,
-            proto_dot_inference__pb2.PredictResponse.FromString,
+            inference__pb2.PredictRequest.SerializeToString,
+            inference__pb2.PredictResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -109,8 +109,8 @@ class InferenceService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/inference.InferenceService/BatchPredict',
-            proto_dot_inference__pb2.BatchPredictRequest.SerializeToString,
-            proto_dot_inference__pb2.BatchPredictResponse.FromString,
+            inference__pb2.BatchPredictRequest.SerializeToString,
+            inference__pb2.BatchPredictResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -126,7 +126,7 @@ class InferenceService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/inference.InferenceService/TestPredict',
-            proto_dot_inference__pb2.TestPredictRequest.SerializeToString,
-            proto_dot_inference__pb2.TestPredictResponse.FromString,
+            inference__pb2.TestPredictRequest.SerializeToString,
+            inference__pb2.TestPredictResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

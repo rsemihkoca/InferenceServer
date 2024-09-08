@@ -98,11 +98,33 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             image = Image.open(io.BytesIO(request.image.image_data))
             image_np = np.array(image)
 
-            results = self.model(image_np, conf=config['model']['confidence_threshold'], 
-                                 classes=self.target_classes)
-            detections = self.process_result(results[0])
+            results = self.model(image_np, conf=config['model']['confidence_threshold'],
+                                #  iou=config['model']['nms_threshold'],
+                                #  imgsz=1440,
+                                #  device='cuda',
+                                # agnostic_nms=True,
+                                classes=self.target_classes)
+            
+            result = results[0]
+            detections = self.process_result(result)
 
-            response = inference_pb2.PredictResponse(camera_ip=camera_ip, detections=detections)
+            # Plot image with bounding boxes
+            plot_image = result.plot(boxes=True, conf=True, line_width=2)
+            
+            # Add centroids to the plot
+            for detection in detections:
+                centroid = detection.centroid
+                cv2.circle(plot_image, (int(centroid[0]), int(centroid[1])), 5, (0, 255, 0), -1)
+
+            # Convert plotted image to bytes
+            plot_image_bytes = io.BytesIO()
+            Image.fromarray(plot_image).save(plot_image_bytes, format='PNG')
+
+            response = inference_pb2.PredictResponse(
+                camera_ip=camera_ip, 
+                detections=detections,
+                plot_image=plot_image_bytes.getvalue()
+            )
 
             latency = time.time() - start_time
             logger.info(f"Single inference completed in {latency:.4f} seconds for camera IP: {camera_ip}")
