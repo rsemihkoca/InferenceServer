@@ -106,7 +106,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
                                 classes=self.target_classes)
             
             result = results[0]
-            detections = self.process_result(result)
+            detections = self.process_result(result, apply_nms=False)
 
             # Plot image with bounding boxes
             plot_image = result.plot(boxes=True, conf=True, line_width=2)

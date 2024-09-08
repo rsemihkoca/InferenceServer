@@ -32,3 +32,10 @@ sudo ncdu
 ## create env with python 3.8
 
 conda create -n inference python=3.8
+
+## NMS not working
+
+RTDETR and YOLOv10 do not use NMS.
+To address your concern about redundant detection boxes, it's important to note that while YOLOv10 aims to improve efficiency by eliminating the need for traditional NMS, it may still produce overlapping boxes in certain scenarios. This can happen due to the inherent nature of object detection models and the complexity of real-world scenes.
+solution:
+https://github.com/ultralytics/ultralytics/issues/13894
