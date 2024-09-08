@@ -160,13 +160,14 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             image = Image.open(io.BytesIO(request.image.image_data))
             image_np = np.array(image)
             # Test Predict must return all classes
+            # classes=self.target_classes
             results = self.model(image_np, 
                                  conf=config['model']['confidence_threshold'], 
                                 #  iou=config['model']['nms_threshold'],
                                 #  imgsz=1440,
                                 #  device='cuda',
                                 #  agnostic_nms=False,
-                                 classes=self.target_classes)
+                                 )
             result = results[0]
 
             detections = self.process_result(result, apply_nms=False)
