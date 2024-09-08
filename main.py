@@ -7,7 +7,7 @@ import grpc
 import numpy as np
 import cv2
 from PIL import Image
-from ultralytics import YOLO
+from ultralytics import YOLOv10
 import torch
 
 import proto.inference_pb2 as inference_pb2
@@ -35,7 +35,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
     def load_model(self):
         logger.info("Loading model...")
         try:
-            model = YOLO(config['model']['path'])
+            model = YOLOv10(config['model']['path'],)
             model.to(torch.device('cuda'))
             return model
         except Exception as e:
