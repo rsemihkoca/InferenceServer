@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install any necessary dependencies if your project has a requirements.txt file
 # Uncomment the following line if you have a requirements.txt
-RUN pip3 install prometheus_client
+RUN pip3 install -r requirements.txt
 
 # Copy the content of the app folder into the /app directory in the container
 COPY . /app
