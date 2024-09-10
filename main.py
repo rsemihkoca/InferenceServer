@@ -37,7 +37,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             # model.iou = self.nms_threshold
             model.agnostic = True  # NMS for all classes
             model.multi_label = True  # Single class per box
-            model.max_det = 300  # Maximum number of detections
+            # model.max_det = 300  # Maximum number of detections
             return model
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}")
