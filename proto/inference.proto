@@ -3,6 +3,7 @@ syntax = "proto3";
 package inference;
 
 service InferenceService {
+  rpc PredictX (PredictRequest) returns (PredictXResponse) {}
   rpc Predict (PredictRequest) returns (PredictResponse) {}
   rpc BatchPredict (BatchPredictRequest) returns (BatchPredictResponse) {}
   rpc TestPredict (TestPredictRequest) returns (TestPredictResponse) {}
@@ -11,6 +12,16 @@ service InferenceService {
 message ImageData {
   string camera_ip = 1;
   bytes image_data = 2;
+}
+
+
+message PredictXResponse {
+  string camera_ip = 1;
+  repeated float boxes = 2 [packed=true];
+  repeated int32 classes = 3 [packed=true];
+  repeated float confidences = 4 [packed=true];
+  repeated string names = 5;
+  repeated float centroids = 6 [packed=true];
 }
 
 message PredictRequest {

@@ -15,8 +15,8 @@ metrics:
 
 model:
   path: "yolov10x.pt"
-  confidence_threshold: 0.01
-  nms_threshold: 0.85  # default 0.7
+  confidence_threshold: 0.5
+  # nms_threshold: 0.99  # default 0.7 # NMS not supported in YOLOv10
   classNames: {
     "0": "person",
     "13": "bench",

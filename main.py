@@ -26,18 +26,17 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
         self.target_classes = self._get_target_classes()
         self.class_names = config['model']['classNames']
         self.confidence_threshold = config['model']['confidence_threshold']
-        self.nms_threshold = config['model']['nms_threshold']
+        # self.nms_threshold = config['model']['nms_threshold']
         self.model = self._load_model()
 
     def _load_model(self):
         logger.info("Loading model...")
         try:
-            model = YOLOv10(config['model']['path'])
+            model = YOLOv10(config['model']['path'], task='detect')
             model.to(torch.device('cuda'))
-            model.conf = self.confidence_threshold
-            model.iou = self.nms_threshold
+            # model.iou = self.nms_threshold
             model.agnostic = True  # NMS for all classes
-            model.multi_label = False  # Single class per box
+            model.multi_label = True  # Single class per box
             model.max_det = 300  # Maximum number of detections
             return model
         except Exception as e:
@@ -48,10 +47,13 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
         return [int(class_id) for class_id in config['model']['classNames'].keys()]
 
     @torch.no_grad()
-    def _process_image(self, image_data):
+    def _process_image(self, image_data, filter_classes=True):
         image = Image.open(io.BytesIO(image_data))
         image_np = np.array(image)
-        results = self.model(image_np, classes=self.target_classes)
+        classes = self.target_classes if filter_classes else None
+        results = self.model(image_np, 
+                             conf=self.confidence_threshold, 
+                             classes=classes)
         return results[0]
 
     def _process_result(self, result):
@@ -75,13 +77,24 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             detections.append(detection)
         return detections
 
+    def _create_plot_image(self, result, detections):
+        # Get the plotted image from the YOLOv10 result
+        plot_image = result.plot(boxes=True, conf=True, line_width=2)
+        
+        # Add centroids to the plot
+        for detection in detections:
+            centroid = detection.centroid
+            cv2.circle(plot_image, (int(centroid[0]), int(centroid[1])), 5, (0, 255, 0), -1)
+        
+        return plot_image
+    
     def Predict(self, request, context):
         camera_ip = request.image.camera_ip
         logger.info(f"Received a single inference request from camera IP: {camera_ip}")
         start_time = time.time()
 
         try:
-            result = self._process_image(request.image.image_data)
+            result = self._process_image(request.image.image_data, filter_classes=True)
             boxes, scores, class_ids = self._process_result(result)
             detections = self._create_detections(boxes, scores, class_ids)
 
@@ -103,7 +116,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
         start_time = time.time()
 
         try:
-            result = self._process_image(request.image.image_data)
+            result = self._process_image(request.image.image_data, filter_classes=True)
             boxes, scores, class_ids = self._process_result(result)
             
             names = [self.class_names.get(str(class_id), "Unknown") for class_id in class_ids]
@@ -134,7 +147,7 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
             batch_images = [np.array(Image.open(io.BytesIO(img.image_data))) for img in request.images]
             
             with torch.no_grad():
-                batch_results = self.model(batch_images, classes=self.target_classes)
+                batch_results = self.model(batch_images, classes=self.target_classes, conf=self.confidence_threshold)
 
             for img_data, result in zip(request.images, batch_results):
                 boxes, scores, class_ids = self._process_result(result)
@@ -154,9 +167,17 @@ class InferenceService(inference_pb2_grpc.InferenceServiceServicer):
         start_time = time.time()
 
         try:
-            result = self._process_image(request.image.image_data)
+            result = self._process_image(request.image.image_data, filter_classes=False)
             boxes, scores, class_ids = self._process_result(result)
             detections = self._create_detections(boxes, scores, class_ids)
+            
+            # Create the plot image with bounding boxes and centroids
+            plot_image = self._create_plot_image(result, detections)
+
+            # Convert plot image to bytes
+            plot_image_bytes = io.BytesIO()
+            Image.fromarray(plot_image).save(plot_image_bytes, format='PNG')
+
 
             response = inference_pb2.TestPredictResponse(
                 camera_ip=camera_ip,
