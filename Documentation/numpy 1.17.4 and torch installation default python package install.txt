@@ -1,0 +1,1 @@
+python3.6 -m pip install torch-1.10.0-cp36-cp36m-linux_aarch64.whl 
